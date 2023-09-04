@@ -29,7 +29,7 @@ const App = () => {
   });
 
   const [countries, setCountries] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState(null);
   const [errors, setErrors] = useState({});
   const [submittedData, setSubmittedData] = useState([]);
   const [editIndex, setEditIndex] = useState(-1); // Initialize with -1 for no edit
@@ -95,7 +95,7 @@ const App = () => {
     if (validateForm()) {
       if (editIndex === -1) {
         // New submission
-        setSubmittedData([...submittedData, formData]);        
+        setSubmittedData([...submittedData, formData]);
       } else {
         // Edit submission
         const updatedData = [...submittedData];
@@ -103,7 +103,7 @@ const App = () => {
         setSubmittedData(updatedData);
         setEditIndex(-1); // Reset editIndex
       }
-
+  
       // Clear the form
       setFormData({
         firstName: '',
@@ -112,12 +112,15 @@ const App = () => {
         mobile: '',
         address1: '',
         address2: '',
-        country: '',
+        country: selectedCountry ? selectedCountry.value : '', // Set the selected country
         zipCode: '',
       });
+  
+      // Reset selected country
+      setSelectedCountry(null);
     }
   };
-
+  
   const handleEdit = (index) => {
     // Set the form data to the selected submission for editing
     setFormData(submittedData[index]);
@@ -132,9 +135,9 @@ const App = () => {
   };
 
   return (
-    <Container>
-      <Row>
-        <Col>
+    <Container >
+      <Row className="justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <Col xs={10}>
           <h4>User Information</h4>
           <Form onSubmit={handleSubmit}>
             <Row className="mb-3">
@@ -229,7 +232,7 @@ const App = () => {
                 <Form.Label>Country</Form.Label>
                 <Select
                   value={selectedCountry}
-                  onChange={handleCountryChange}
+                  onChange={(value) => setSelectedCountry(value)}
                   options={countries}
                   isSearchable
                   isClearable
@@ -267,12 +270,12 @@ const App = () => {
             )}
           </Form>
         </Col>
-        <Col>
+        <Col xs={10} className="mt-4">
           {submittedData.map((data, index) => (
             <div key={index} className="mb-3">
               <h6>User Information {index + 1}</h6>
               <p>
-                <strong>Name:</strong> {data.firstName} {data.lastName}
+                <strong>Name:</strong> {data.firstName} {data.lastName} {data.country}
               </p>
               
               <Button
